@@ -47,7 +47,7 @@ export default function App() {
         {loading && <p>טוען...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
         {weatherData && (
-          <div style={{ backgroundColor: "#fff", padding: "1rem", borderRadius: "8px", display: "inline-block" }}>
+          <div style={{ backgroundColor: "#fff",color: "#333", padding: "1rem", borderRadius: "8px", display: "inline-block" }}>
             <h2>{weatherData.name}</h2>
             <p>{weatherData.main.temp}°C</p>
             <p>{weatherData.weather[0].description}</p>
