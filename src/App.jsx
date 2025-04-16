@@ -7,7 +7,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_KEY = "49dcc5b9d708dca80c2335345962f2d4"; // ← הכניסי כאן את המפתח האמיתי שלך
+  const API_KEY = import.meta.env.VITE_API_KEY;
+
 
   const getWeather = async () => {
     if (!city) return;
