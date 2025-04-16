@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// App.jsx
+import { useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [city, setCity] = useState("");
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const API_KEY = "49dcc5b9d708dca80c2335345962f2d4"; // ← הכניסי כאן את המפתח האמיתי שלך
+
+  const getWeather = async () => {
+    if (!city) return;
+
+    setLoading(true);
+    setError(null);
+    setWeatherData(null);
+
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=he`
+      );
+      if (!res.ok) throw new Error("עיר לא נמצאה");
+      const data = await res.json();
+      setWeatherData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ minHeight: "100vh", backgroundColor: "#e0f7fa", padding: "2rem", textAlign: "center" }}>
+      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>בדיקת מזג אוויר</h1>
+      <input
+        type="text"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+        placeholder="הכנס שם עיר"
+        style={{ padding: "0.5rem", fontSize: "1rem", width: "200px", marginRight: "0.5rem" }}
+      />
+      <button onClick={getWeather} style={{ padding: "0.5rem 1rem", fontSize: "1rem" }}>חפש</button>
 
-export default App
+      <div style={{ marginTop: "2rem" }}>
+        {loading && <p>טוען...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {weatherData && (
+          <div style={{ backgroundColor: "#fff", padding: "1rem", borderRadius: "8px", display: "inline-block" }}>
+            <h2>{weatherData.name}</h2>
+            <p>{weatherData.main.temp}°C</p>
+            <p>{weatherData.weather[0].description}</p>
+            <img
+              src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+              alt="weather icon"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
